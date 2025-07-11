@@ -88,6 +88,28 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        /* Password field container */
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .password-toggle:hover {
+            color: #333;
+        }
+
         .btn-login {
             width: 100%;
             padding: 15px;
@@ -326,6 +348,30 @@
         .content-header h1 {
             color: #333;
             font-size: clamp(20px, 5vw, 28px);
+        }
+
+        .content-header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-profile {
+            padding: 12px 20px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(14px, 3.5vw, 16px);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-profile:hover {
+            background: #219a52;
+            transform: translateY(-2px);
         }
 
         .btn-logout {
@@ -662,6 +708,30 @@
             font-size: clamp(14px, 3.5vw, 16px);
         }
 
+        /* Profile styles */
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 5px solid #27ae60;
+        }
+
+        .profile-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: clamp(16px, 4vw, 18px);
+            border-bottom: 2px solid #27ae60;
+            padding-bottom: 10px;
+        }
+
         /* Parking visual */
         .parking-grid {
             display: grid;
@@ -795,12 +865,15 @@
             border-left-color: #17a2b8;
         }
 
-        /* Footer */
+        /* Footer - FIXED STYLES */
         .footer {
             background: #2c3e50;
             color: white;
             padding: 30px 0;
             margin-top: auto;
+            position: relative;
+            z-index: 1;
+            margin-left: 280px; /* Mismo margen que main-content */
         }
 
         .footer-content {
@@ -856,6 +929,7 @@
         .icon-marketing::before { content: "📢 "; }
         .icon-analytics::before { content: "📈 "; }
         .icon-users::before { content: "👥 "; }
+        .icon-profile::before { content: "👤 "; }
 
         .admin-only {
             display: block;
@@ -915,10 +989,19 @@
                 padding: 80px 15px 20px 15px;
             }
             
+            .footer {
+                margin-left: 0; /* Reset footer margin on mobile */
+            }
+            
             .content-header {
                 padding: 15px 20px;
                 flex-direction: column;
                 text-align: center;
+            }
+            
+            .content-header-right {
+                flex-direction: column;
+                width: 100%;
             }
             
             .parking-grid {
@@ -944,7 +1027,8 @@
                 min-height: 400px;
             }
             
-            .company-info-grid {
+            .company-info-grid,
+            .profile-info-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -1048,16 +1132,16 @@
                 </div>
                 <div class="form-group">
                     <label for="loginPassword">Contraseña</label>
-                    <input type="password" id="loginPassword" placeholder="Ingrese su contraseña" required>
+                    <div class="password-container">
+                        <input type="password" id="loginPassword" placeholder="Ingrese su contraseña" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">👁️</button>
+                    </div>
                 </div>
                 <button type="submit" class="btn-login">Iniciar Sesión</button>
                 <a href="index.html" class="btn-back">🏠 Volver al Inicio</a>
-                
             </form>
         </div>
     </div>
-
-    
 
     <!-- Dashboard Container -->
     <div id="dashboardContainer" class="dashboard-container">
@@ -1074,6 +1158,11 @@
                         <li class="nav-item">
                             <a class="nav-link active" onclick="showSection('dashboard')">
                                 <span class="icon-dashboard"></span>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="showSection('profile')">
+                                <span class="icon-profile"></span>Mi Perfil
                             </a>
                         </li>
                         <li class="nav-item">
@@ -1142,7 +1231,10 @@
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Megaplaza_logo.png/640px-Megaplaza_logo.png" alt="Megaplaza Logo" class="logo-small">
                         <h1 id="pageTitle">Dashboard</h1>
                     </div>
-                    <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+                    <div class="content-header-right">
+                        <button class="btn-profile" onclick="showSection('profile')">👤 Mi Perfil</button>
+                        <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+                    </div>
                 </div>
 
                 <!-- Alert Container -->
@@ -1162,6 +1254,107 @@
                         frameborder="0" 
                         allowFullScreen="true">
                     </iframe>
+                </section>
+
+                <!-- Profile Section -->
+                <section id="profile" class="content-section">
+                    <div class="section-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Megaplaza_logo.png/640px-Megaplaza_logo.png" alt="Megaplaza Logo" class="logo-section">
+                        <h2>Mi Perfil</h2>
+                    </div>
+                    
+                    <div class="profile-info-grid">
+                        <div class="profile-card">
+                            <h3>👤 Información Personal</h3>
+                            <div class="info-item">
+                                <span class="label">Nombre Completo:</span>
+                                <span class="value" id="profileName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">DNI:</span>
+                                <span class="value" id="profileDni">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Usuario:</span>
+                                <span class="value" id="profileUsername">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Rol:</span>
+                                <span class="value" id="profileRole">-</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-card" id="employeeInfoCard" style="display: none;">
+                            <h3>🏢 Información Laboral</h3>
+                            <div class="info-item">
+                                <span class="label">Cargo:</span>
+                                <span class="value" id="profilePosition">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Departamento:</span>
+                                <span class="value" id="profileDepartment">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Turno:</span>
+                                <span class="value" id="profileShift">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Teléfono:</span>
+                                <span class="value" id="profilePhone">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Email:</span>
+                                <span class="value" id="profileEmail">-</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-card">
+                            <h3>🔒 Seguridad</h3>
+                            <div class="form-container">
+                                <form id="changePasswordForm">
+                                    <div class="form-group">
+                                        <label for="currentPassword">Contraseña Actual</label>
+                                        <div class="password-container">
+                                            <input type="password" id="currentPassword" placeholder="Contraseña actual" required>
+                                            <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">👁️</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="newPassword">Nueva Contraseña</label>
+                                        <div class="password-container">
+                                            <input type="password" id="newPassword" placeholder="Nueva contraseña" required>
+                                            <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">👁️</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+                                        <div class="password-container">
+                                            <input type="password" id="confirmPassword" placeholder="Confirmar contraseña" required>
+                                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</button>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">🔒 Cambiar Contraseña</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="profile-card" id="employeeEditCard" style="display: none;">
+                            <h3>✏️ Editar Información</h3>
+                            <div class="form-container">
+                                <form id="editProfileForm">
+                                    <div class="form-group">
+                                        <label for="editPhone">Teléfono</label>
+                                        <input type="tel" id="editPhone" placeholder="999999999">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editEmail">Email</label>
+                                        <input type="email" id="editEmail" placeholder="correo@megaplaza.com">
+                                    </div>
+                                    <button type="submit" class="btn btn-success">💾 Guardar Cambios</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- Company Section -->
@@ -1726,7 +1919,10 @@
                 </div>
                 <div class="form-group">
                     <label for="newPassword">Contraseña</label>
-                    <input type="password" id="newPassword" placeholder="Contraseña segura" required>
+                    <div class="password-container">
+                        <input type="password" id="newPasswordModal" placeholder="Contraseña segura" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('newPasswordModal')">👁️</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="newUserRole">Rol</label>
@@ -1922,6 +2118,20 @@
             }, 4000);
         }
 
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
         // Mobile menu functions
         function toggleMobileMenu() {
             const sidebar = document.getElementById('sidebar');
@@ -1943,8 +2153,14 @@
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            
+            // Validar campos vacíos
+            if (!username || !password) {
+                showAlert('❌ Por favor, ingrese sus credenciales', 'danger');
+                return;
+            }
             
             const user = data.users.find(u => u.username === username && u.password === password);
             
@@ -1957,7 +2173,7 @@
                 
                 showDashboard();
             } else {
-                showAlert('Usuario o contraseña incorrectos', 'danger');
+                showAlert('❌ Usuario o contraseña incorrectos. Verifique sus credenciales', 'danger');
             }
         });
 
@@ -1974,6 +2190,7 @@
             initializeParkingGrid();
             updateAttendanceStats();
             setupAttendanceView();
+            updateProfileData();
         }
 
         function logout() {
@@ -1987,6 +2204,86 @@
             document.getElementById('loginForm').reset();
             closeMobileMenu();
         }
+
+        // Profile functions
+        function updateProfileData() {
+            document.getElementById('profileName').textContent = currentUser.name || '-';
+            document.getElementById('profileDni').textContent = currentUser.dni || 'N/A';
+            document.getElementById('profileUsername').textContent = currentUser.username || '-';
+            document.getElementById('profileRole').textContent = currentUser.role === 'admin' ? 'Administrador' : 'Empleado';
+            
+            if (currentEmployee) {
+                document.getElementById('employeeInfoCard').style.display = 'block';
+                document.getElementById('employeeEditCard').style.display = 'block';
+                
+                document.getElementById('profilePosition').textContent = currentEmployee.position || '-';
+                document.getElementById('profileDepartment').textContent = currentEmployee.department || '-';
+                document.getElementById('profileShift').textContent = currentEmployee.shift || '-';
+                document.getElementById('profilePhone').textContent = currentEmployee.phone || '-';
+                document.getElementById('profileEmail').textContent = currentEmployee.email || '-';
+                
+                document.getElementById('editPhone').value = currentEmployee.phone || '';
+                document.getElementById('editEmail').value = currentEmployee.email || '';
+            } else {
+                document.getElementById('employeeInfoCard').style.display = 'none';
+                document.getElementById('employeeEditCard').style.display = 'none';
+            }
+        }
+
+        // Change password
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (currentPassword !== currentUser.password) {
+                showAlert('❌ La contraseña actual es incorrecta', 'danger');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('❌ Las contraseñas nuevas no coinciden', 'danger');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showAlert('❌ La nueva contraseña debe tener al menos 6 caracteres', 'danger');
+                return;
+            }
+            
+            currentUser.password = newPassword;
+            const userIndex = data.users.findIndex(u => u.username === currentUser.username);
+            if (userIndex !== -1) {
+                data.users[userIndex].password = newPassword;
+            }
+            
+            this.reset();
+            showAlert('✅ Contraseña cambiada exitosamente', 'success');
+        });
+
+        // Edit profile
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentEmployee) return;
+            
+            const phone = document.getElementById('editPhone').value;
+            const email = document.getElementById('editEmail').value;
+            
+            currentEmployee.phone = phone;
+            currentEmployee.email = email;
+            
+            const employeeIndex = data.employees.findIndex(e => e.id === currentEmployee.id);
+            if (employeeIndex !== -1) {
+                data.employees[employeeIndex] = { ...currentEmployee };
+            }
+            
+            updateProfileData();
+            updateEmployeesList();
+            showAlert('✅ Información actualizada exitosamente', 'success');
+        });
 
         // Navegación del menú de reportes
         function toggleReportsMenu() {
@@ -2061,6 +2358,7 @@
             
             const titles = {
                 dashboard: 'Dashboard Principal',
+                profile: 'Mi Perfil',
                 company: 'Información de la Empresa',
                 parking: 'Estado del Parqueo',
                 visitors: 'Gestión de Visitantes',
@@ -2077,6 +2375,9 @@
         function updateSectionContent(section) {
             switch(section) {
                 case 'dashboard':
+                    break;
+                case 'profile':
+                    updateProfileData();
                     break;
                 case 'parking':
                     updateParkingView();
@@ -2154,7 +2455,7 @@
             e.preventDefault();
             
             const username = document.getElementById('newUsername').value;
-            const password = document.getElementById('newPassword').value;
+            const password = document.getElementById('newPasswordModal').value;
             const role = document.getElementById('newUserRole').value;
             
             if (data.users.some(u => u.username === username)) {
